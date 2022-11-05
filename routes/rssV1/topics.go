@@ -25,19 +25,19 @@ func GetTopicsForLang(region support.Regions) func(c *gin.Context) {
 		}
 		var feedItems []*feeds.Item
 		for rows.Next() {
-			var id, title, uri, maint_body, topic_image string
+			var id, title, uri, maintBody, topicImage string
 			var edit time.Time
-			if err = rows.Scan(&id, &title, &uri, &edit, &maint_body, &topic_image); err != nil {
+			if err = rows.Scan(&id, &title, &uri, &edit, &maintBody, &topicImage); err != nil {
 				sentry.CaptureException(err)
 			}
 			feedItems = append(feedItems,
 				&feeds.Item{
-					Id:          id,
+					Id:          topicImage,
 					Title:       title,
 					Link:        &feeds.Link{Href: uri},
-					Description: maint_body,
+					Description: maintBody,
 					Created:     edit,
-					Author:      &feeds.Author{Name: id, Email: topic_image},
+					Author:      &feeds.Author{Name: id, Email: topicImage},
 				})
 		}
 		feed.Items = feedItems
