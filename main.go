@@ -75,6 +75,14 @@ func main() {
 			status.GET("/FR", rssV1.GetStatusForLang(support.FR))
 			status.GET("/DE", rssV1.GetStatusForLang(support.DE))
 		}
+		notices := rss.Group("/notices")
+		{
+			notices.GET("/NA", rssV1.GetNoticeForLang(support.NA))
+			notices.GET("/EU", rssV1.GetNoticeForLang(support.EU))
+			notices.GET("/JP", rssV1.GetNoticeForLang(support.JP))
+			notices.GET("/FR", rssV1.GetNoticeForLang(support.FR))
+			notices.GET("/DE", rssV1.GetNoticeForLang(support.DE))
+		}
 	}
 	r.GET("/ping", func(c *gin.Context) {
 		milieu := c.MustGet("MILIEU").(support.Milieu)

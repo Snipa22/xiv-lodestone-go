@@ -18,7 +18,7 @@ func GetNoticeForLang(region support.Regions) func(c *gin.Context) {
 		}
 		feed := &feeds.Feed{
 			Title:       "FFXIV Lodestone Notice RSS feed for " + region.String(),
-			Link:        &feeds.Link{Href: "https://xivrss.jagtech.io/rss/notice/" + region.URIExtensions()},
+			Link:        &feeds.Link{Href: "https://xivrss.jagtech.io/rss/notices/" + region.URIExtensions()},
 			Description: "Lodestone Notice Notifications",
 			Author:      &feeds.Author{Name: "Impala#0059"},
 			Created:     time.Now(),
