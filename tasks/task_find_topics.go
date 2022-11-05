@@ -44,13 +44,13 @@ func SetupGettersForTopics(milieu support.Milieu) func() {
 					if t.Data == "div" && len(t.Attr) == 1 && t.Attr[0].Key == "class" && t.Attr[0].Val == "news__list--banner" {
 						inTextParseZone = true
 					}
-				}
-				if inMaintLine && tt == html.StartTagToken && len(imageURL) == 0 {
-					t := tkn.Token()
-					if t.Data == "img" {
-						imageURL = t.Attr[0].Val
+					if inTextParseZone && tt == html.StartTagToken && len(imageURL) == 0 {
+						if t.Data == "img" {
+							imageURL = t.Attr[0].Val
+						}
 					}
 				}
+
 				if inMaintLine && tt == html.TextToken {
 					t := tkn.Token()
 					if inMaintLine && len(maintLine) == 0 {
@@ -80,7 +80,7 @@ func SetupGettersForTopics(milieu support.Milieu) func() {
 						if err := row.Scan(&bid); err != nil && err == pgx.ErrNoRows {
 							// Do the SQL insert if appropriate
 							_, err = milieu.Pgx.Exec(context.Background(), "insert into ls_topics (id, region, title, uri, square_edit, topic_body, topic_image)"+
-								"values ($1, $2, $3, $4, $5, $6) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0), topicBody, imageURL)
+								"values ($1, $2, $3, $4, $5, $6, $7) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0), topicBody, imageURL)
 							if err != nil {
 								sentry.CaptureException(err)
 							}
@@ -91,6 +91,7 @@ func SetupGettersForTopics(milieu support.Milieu) func() {
 						maintURL = ""
 						hash = ""
 						topicBody = ""
+						imageURL = ""
 					}
 				}
 				if tt == html.ErrorToken {
