@@ -37,6 +37,7 @@ func GetNoticeForLang(region support.Regions) func(c *gin.Context) {
 					Link:        &feeds.Link{Href: uri},
 					Description: maint_body,
 					Created:     edit,
+					Author:      &feeds.Author{Name: id, Email: uri},
 				})
 		}
 		feed.Items = feedItems

@@ -12,7 +12,7 @@ import (
 func GetTopicsForLang(region support.Regions) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		milieu := c.MustGet("MILIEU").(support.Milieu)
-		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit, topic_body from ls_topics where region = $1 order by date_found desc limit 10", region)
+		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit, topic_body, topic_image from ls_topics where region = $1 order by date_found desc limit 10", region)
 		if err != nil {
 			sentry.CaptureException(err)
 		}
@@ -25,9 +25,9 @@ func GetTopicsForLang(region support.Regions) func(c *gin.Context) {
 		}
 		var feedItems []*feeds.Item
 		for rows.Next() {
-			var id, title, uri, maint_body string
+			var id, title, uri, maint_body, topic_image string
 			var edit time.Time
-			if err = rows.Scan(&id, &title, &uri, &edit, &maint_body); err != nil {
+			if err = rows.Scan(&id, &title, &uri, &edit, &maint_body, &topic_image); err != nil {
 				sentry.CaptureException(err)
 			}
 			feedItems = append(feedItems,
@@ -37,6 +37,7 @@ func GetTopicsForLang(region support.Regions) func(c *gin.Context) {
 					Link:        &feeds.Link{Href: uri},
 					Description: maint_body,
 					Created:     edit,
+					Author:      &feeds.Author{Name: id, Email: topic_image},
 				})
 		}
 		feed.Items = feedItems

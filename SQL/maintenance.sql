@@ -42,6 +42,7 @@ create table ls_topics
     uri        text        not null unique,
     topic_body    text        not null,
     square_edit timestamptz not null default now(),
-    date_found timestamptz not null default now()
+    date_found timestamptz not null default now(),
+    topic_image text not null
 );
 create unique index idx_id_region_topic on ls_topics (id, region);
