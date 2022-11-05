@@ -45,6 +45,7 @@ func main() {
 		Pgx:   pgpool,
 		Redis: rdb,
 	}
+	tasks.SetupGettersForTopics(milieu)()
 	// Enable Recurring Tasks
 	c := cron.New(cron.WithSeconds())
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintencePages(milieu))
@@ -82,6 +83,14 @@ func main() {
 			notices.GET("/JP", rssV1.GetNoticeForLang(support.JP))
 			notices.GET("/FR", rssV1.GetNoticeForLang(support.FR))
 			notices.GET("/DE", rssV1.GetNoticeForLang(support.DE))
+		}
+		topics := rss.Group("/topics")
+		{
+			topics.GET("/NA", rssV1.GetTopicsForLang(support.NA))
+			topics.GET("/EU", rssV1.GetTopicsForLang(support.EU))
+			topics.GET("/JP", rssV1.GetTopicsForLang(support.JP))
+			topics.GET("/FR", rssV1.GetTopicsForLang(support.FR))
+			topics.GET("/DE", rssV1.GetTopicsForLang(support.DE))
 		}
 	}
 	r.GET("/ping", func(c *gin.Context) {
