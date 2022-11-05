@@ -45,7 +45,6 @@ func main() {
 		Pgx:   pgpool,
 		Redis: rdb,
 	}
-	tasks.SetupGetStatusPages(milieu)()
 	// Enable Recurring Tasks
 	c := cron.New(cron.WithSeconds())
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintencePages(milieu))
