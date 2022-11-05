@@ -2,7 +2,6 @@ package tasks
 
 import (
 	"context"
-	"fmt"
 	"github.com/Snipa22/xiv-lodestone-go/support"
 	"github.com/getsentry/sentry-go"
 	"github.com/jackc/pgx/v4"
@@ -20,7 +19,6 @@ func SetupGetMaintencePages(milieu support.Milieu) func() {
 	return func() {
 		// Loop through all lodestones, download all the data required.
 		for _, v := range []support.Regions{0, 1, 2, 3, 4} {
-			fmt.Println(v)
 			// HTTP request the /lodestone/news/category/2 path
 			baseURI := support.GetLodestoneBaseURI(v)
 			baseURI += "/lodestone/news/category/2"

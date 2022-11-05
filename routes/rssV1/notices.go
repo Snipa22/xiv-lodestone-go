@@ -9,17 +9,17 @@ import (
 	"time"
 )
 
-func GetStatusForLang(region support.Regions) func(c *gin.Context) {
+func GetNoticeForLang(region support.Regions) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		milieu := c.MustGet("MILIEU").(support.Milieu)
-		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit, status_body from ls_status where region = $1 order by date_found desc limit 10", region)
+		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit, notice_body from ls_notices where region = $1 order by date_found desc limit 10", region)
 		if err != nil {
 			sentry.CaptureException(err)
 		}
 		feed := &feeds.Feed{
-			Title:       "FFXIV Lodestone Status RSS feed for " + region.String(),
-			Link:        &feeds.Link{Href: "https://xivrss.jagtech.io/rss/status/" + region.URIExtensions()},
-			Description: "Lodestone Status Notifications",
+			Title:       "FFXIV Lodestone Notice RSS feed for " + region.String(),
+			Link:        &feeds.Link{Href: "https://xivrss.jagtech.io/rss/notice/" + region.URIExtensions()},
+			Description: "Lodestone Notice Notifications",
 			Author:      &feeds.Author{Name: "Impala#0059"},
 			Created:     time.Now(),
 		}

@@ -11,13 +11,13 @@ import (
 	"time"
 )
 
-func SetupGetStatusPages(milieu support.Milieu) func() {
+func SetupGetNoticePages(milieu support.Milieu) func() {
 	return func() {
 		// Loop through all lodestones, download all the data required.
 		for _, v := range []support.Regions{0, 1, 2, 3, 4} {
 			// HTTP request the /lodestone/news/category/2 path
 			baseURI := support.GetLodestoneBaseURI(v)
-			baseURI += "/lodestone/news/category/4"
+			baseURI += "/lodestone/news/category/1"
 			page, err := support.GetHtmlPage(baseURI)
 			if err != nil {
 				sentry.CaptureException(err)
@@ -32,7 +32,7 @@ func SetupGetStatusPages(milieu support.Milieu) func() {
 				tt := tkn.Next()
 				if tt == html.StartTagToken {
 					t := tkn.Token()
-					if t.Data == "a" && len(t.Attr) == 2 && t.Attr[1].Key == "class" && t.Attr[1].Val == "news__list--link ic__obstacle--list" {
+					if t.Data == "a" && len(t.Attr) == 2 && t.Attr[1].Key == "class" && t.Attr[1].Val == "news__list--link ic__info--list" {
 						maintURL = support.GetLodestoneBaseURI(v) + t.Attr[0].Val
 					}
 					if t.Data == "div" && len(t.Attr) == 1 && t.Attr[0].Key == "class" && t.Attr[0].Val == "clearfix" {
@@ -53,7 +53,7 @@ func SetupGetStatusPages(milieu support.Milieu) func() {
 						if err != nil {
 							sentry.CaptureException(err)
 						}
-						row := milieu.Pgx.QueryRow(context.Background(), "select id from ls_status where id = $1 and region = $2", hash, v)
+						row := milieu.Pgx.QueryRow(context.Background(), "select id from ls_notices where id = $1 and region = $2", hash, v)
 						var bid string
 						if err := row.Scan(&bid); err != nil && err == pgx.ErrNoRows {
 							// Get the full data set
@@ -85,7 +85,7 @@ func SetupGetStatusPages(milieu support.Milieu) func() {
 								}
 							}
 							// Do the SQL insert if appropriate
-							_, err = milieu.Pgx.Exec(context.Background(), "insert into ls_status (id, region, title, uri, square_edit, status_body)"+
+							_, err = milieu.Pgx.Exec(context.Background(), "insert into ls_notices (id, region, title, uri, square_edit, notice_body)"+
 								"values ($1, $2, $3, $4, $5, $6) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0), maintBody)
 							if err != nil {
 								sentry.CaptureException(err)

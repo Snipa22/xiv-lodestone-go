@@ -45,9 +45,12 @@ func main() {
 		Pgx:   pgpool,
 		Redis: rdb,
 	}
+	tasks.SetupGetNoticePages(milieu)()
 	// Enable Recurring Tasks
 	c := cron.New(cron.WithSeconds())
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintencePages(milieu))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetNoticePages(milieu))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetStatusPages(milieu))
 	if err != nil {
 		sentry.CaptureException(err)
 	}
