@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Snipa22/xiv-lodestone-go/support"
 	"github.com/getsentry/sentry-go"
+	"github.com/jackc/pgx/v4"
 	"golang.org/x/net/html"
 	"regexp"
 	"strconv"
@@ -58,12 +59,45 @@ func SetupGetMaintencePages(milieu support.Milieu) func() {
 						if err != nil {
 							sentry.CaptureException(err)
 						}
-						// Do the SQL insert if appropriate
-						_, err = milieu.Pgx.Exec(context.Background(), "insert into ls_maint (id, region, title, uri, square_edit)"+
-							"values ($1, $2, $3, $4, $5) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0))
-						if err != nil {
-							sentry.CaptureException(err)
+						row := milieu.Pgx.QueryRow(context.Background(), "select id from ls_maint where id = $1 and region = $2", hash, v)
+						var bid string
+						if err := row.Scan(&bid); err != nil && err == pgx.ErrNoRows {
+							// Get the full data set
+							internalPage, err := support.GetHtmlPage(maintURL)
+							if err != nil {
+								sentry.CaptureException(err)
+								continue
+							}
+							intTkn := html.NewTokenizer(strings.NewReader(internalPage))
+							inMaintBody := false
+							maintBody := ""
+							for {
+								tokenLoop := intTkn.Next()
+								if tokenLoop == html.StartTagToken {
+									t := intTkn.Token()
+									if t.Data == "div" && len(t.Attr) == 1 && t.Attr[0].Key == "class" && t.Attr[0].Val == "news__detail__wrapper" {
+										inMaintBody = true
+									}
+									if t.Data == "div" && len(t.Attr) == 1 && t.Attr[0].Key == "class" && t.Attr[0].Val == "news__footer" {
+										inMaintBody = false
+									}
+								}
+								if inMaintBody && tokenLoop == html.TextToken {
+									t := intTkn.Token()
+									maintBody += t.String()
+								}
+								if tokenLoop == html.ErrorToken {
+									break
+								}
+							}
+							// Do the SQL insert if appropriate
+							_, err = milieu.Pgx.Exec(context.Background(), "insert into ls_maint (id, region, title, uri, square_edit, maint_body)"+
+								"values ($1, $2, $3, $4, $5, $6) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0), maintBody)
+							if err != nil {
+								sentry.CaptureException(err)
+							}
 						}
+
 						inMaintLine = false
 						SummedLines = 0
 						maintLine = ""

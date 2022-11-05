@@ -12,7 +12,7 @@ import (
 func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		milieu := c.MustGet("MILIEU").(support.Milieu)
-		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit from ls_maint where region = $1 order by date_found desc limit 10", region)
+		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit, maint_body from ls_maint where region = $1 order by date_found desc limit 10", region)
 		if err != nil {
 			sentry.CaptureException(err)
 		}
@@ -25,9 +25,9 @@ func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 		}
 		var feedItems []*feeds.Item
 		for rows.Next() {
-			var id, title, uri string
+			var id, title, uri, maint_body string
 			var edit time.Time
-			if err = rows.Scan(&id, &title, &uri, &edit); err != nil {
+			if err = rows.Scan(&id, &title, &uri, &edit, &maint_body); err != nil {
 				sentry.CaptureException(err)
 			}
 			feedItems = append(feedItems,
@@ -35,7 +35,7 @@ func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 					Id:          id,
 					Title:       title,
 					Link:        &feeds.Link{Href: uri},
-					Description: "None",
+					Description: maint_body,
 					Created:     edit,
 				})
 		}
