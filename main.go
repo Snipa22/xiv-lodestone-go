@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/Snipa22/xiv-lodestone-go/routes/rssV1"
-	"github.com/Snipa22/xiv-lodestone-go/support"
-	"github.com/Snipa22/xiv-lodestone-go/support/middleware"
-	"github.com/Snipa22/xiv-lodestone-go/tasks"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/routes/rssV1"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/support/middleware"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/tasks"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"

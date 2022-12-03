@@ -2,7 +2,7 @@ package rssV1
 
 import (
 	"context"
-	"github.com/Snipa22/xiv-lodestone-go/support"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"

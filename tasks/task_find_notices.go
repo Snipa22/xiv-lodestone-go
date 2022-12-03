@@ -2,7 +2,7 @@ package tasks
 
 import (
 	"context"
-	"github.com/Snipa22/xiv-lodestone-go/support"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
 	"github.com/getsentry/sentry-go"
 	"github.com/jackc/pgx/v4"
 	"golang.org/x/net/html"

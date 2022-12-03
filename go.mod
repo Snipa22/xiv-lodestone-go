@@ -1,4 +1,4 @@
-module github.com/Snipa22/xiv-lodestone-go
+module git.jagtech.io/ffxiv/xiv-lodestone-go
 
 go 1.19
 

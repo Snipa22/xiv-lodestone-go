@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/Snipa22/xiv-lodestone-go/support"
+	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
 	"github.com/gin-gonic/gin"
 )
 
