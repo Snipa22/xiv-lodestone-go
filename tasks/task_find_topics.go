@@ -75,7 +75,6 @@ func SetupGettersForTopics(milieu support.Milieu) func() {
 					if t.Data == "div" && inTextParseZone {
 						inTextParseZone = false
 						row := milieu.Pgx.QueryRow(context.Background(), "select id from ls_topics where id = $1 and region = $2", hash, v)
-
 						var bid string
 						if err := row.Scan(&bid); err != nil && err == pgx.ErrNoRows {
 							// Do the SQL insert if appropriate
