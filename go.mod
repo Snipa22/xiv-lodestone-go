@@ -3,7 +3,6 @@ module git.jagtech.io/ffxiv/xiv-lodestone-go
 go 1.19
 
 require (
-	git.jagtech.io/ffxiv/xiv-lodestone-go v0.0.1
 	github.com/getsentry/sentry-go v0.15.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
@@ -42,4 +41,8 @@ require (
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+)
+
+replace (
+	git.jagtech.io/ffxiv/xiv-lodestone-go => ./
 )
