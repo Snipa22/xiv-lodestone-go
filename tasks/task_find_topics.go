@@ -2,13 +2,13 @@ package tasks
 
 import (
 	"context"
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
 	"github.com/getsentry/sentry-go"
 	"github.com/jackc/pgx/v4"
 	"golang.org/x/net/html"
 	"strconv"
 	"strings"
 	"time"
+	"xiv-lodestone-go/support"
 )
 
 func SetupGettersForTopics(milieu support.Milieu) func() {

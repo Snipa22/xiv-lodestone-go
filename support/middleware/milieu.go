@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
 	"github.com/gin-gonic/gin"
+	"xiv-lodestone-go/support"
 )
 
 func SetupMilieu(milieu support.Milieu) gin.HandlerFunc {

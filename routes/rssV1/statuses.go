@@ -2,11 +2,11 @@ package rssV1
 
 import (
 	"context"
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
 	"time"
+	"xiv-lodestone-go/support"
 )
 
 func GetStatusForLang(region support.Regions) func(c *gin.Context) {

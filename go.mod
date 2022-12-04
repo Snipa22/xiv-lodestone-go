@@ -1,4 +1,4 @@
-module git.jagtech.io/ffxiv/xiv-lodestone-go
+module xiv-lodestone-go
 
 go 1.19
 
@@ -41,8 +41,4 @@ require (
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-)
-
-replace (
-	git.jagtech.io/ffxiv/xiv-lodestone-go => ./
 )

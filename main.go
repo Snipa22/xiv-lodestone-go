@@ -2,10 +2,6 @@ package main
 
 import (
 	"context"
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/routes/rssV1"
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/support"
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/support/middleware"
-	"git.jagtech.io/ffxiv/xiv-lodestone-go/tasks"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
@@ -14,6 +10,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"xiv-lodestone-go/routes/rssV1"
+	"xiv-lodestone-go/support"
+	"xiv-lodestone-go/support/middleware"
+	"xiv-lodestone-go/tasks"
 )
 
 var ctx = context.Background()
