@@ -4,7 +4,7 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o /godocker
+RUN go build -o /godocker main.go
 
 
 FROM scratch
