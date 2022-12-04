@@ -1,7 +1,8 @@
 FROM golang:1.19.1-alpine AS build
 WORKDIR /app
 COPY go.mod ./
-RUN go get -u
+COPY go.sum ./
+RUN go mod download
 COPY *.go ./
 RUN go build -o /godocker
 
