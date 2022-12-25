@@ -49,17 +49,17 @@ func (r Regions) URIExtensions() string {
 
 func GetLodestoneBaseURI(r Regions) string {
 	if r == NA {
-		return "https://na.finalfantasyxiv.com/"
+		return "https://na.finalfantasyxiv.com"
 	} else if r == EU {
-		return "https://eu.finalfantasyxiv.com/"
+		return "https://eu.finalfantasyxiv.com"
 	} else if r == JP {
-		return "https://jp.finalfantasyxiv.com/"
+		return "https://jp.finalfantasyxiv.com"
 	} else if r == FR {
-		return "https://fr.finalfantasyxiv.com/"
+		return "https://fr.finalfantasyxiv.com"
 	} else if r == DE {
-		return "https://de.finalfantasyxiv.com/"
+		return "https://de.finalfantasyxiv.com"
 	}
-	return "https://na.finalfantasyxiv.com/"
+	return "https://na.finalfantasyxiv.com"
 }
 
 func GetHtmlPage(webPage string) (string, error) {
