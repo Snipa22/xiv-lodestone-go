@@ -2,17 +2,16 @@ package main
 
 import (
 	"context"
+	"git.jagtech.io/Impala/corelib"
+	"git.jagtech.io/Impala/corelib/middleware"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/robfig/cron/v3"
 	"log"
 	"net/http"
 	"os"
 	"xiv-lodestone-go/routes/rssV1"
 	"xiv-lodestone-go/support"
-	"xiv-lodestone-go/support/middleware"
 	"xiv-lodestone-go/tasks"
 )
 
@@ -28,23 +27,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)
 	}
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_SERVER"),
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	pgpool, err := pgxpool.Connect(ctx, os.Getenv("PSQL_SERVER"))
+
+	milieu, err := corelib.NewMilieu(os.Getenv("PSQL_SERVER"), os.Getenv("REDIS_SERVER"))
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Fatalf("Unable to connect to PSQL: %s", os.Getenv("PSQL_SERVER"))
+		log.Fatalf("Unable to setup Milieu, check sentry for details")
 	}
 
 	// We need to broadcast through a channel to each worker that
-	// Prep-rep Milieu
-	milieu := support.Milieu{
-		Pgx:   pgpool,
-		Redis: rdb,
-	}
 	// Enable Recurring Tasks
 	c := cron.New(cron.WithSeconds())
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGettersForTopics(milieu))
@@ -94,7 +84,7 @@ func main() {
 		}
 	}
 	r.GET("/ping", func(c *gin.Context) {
-		milieu := c.MustGet("MILIEU").(support.Milieu)
+		milieu := middleware.MustGetMilieu(c)
 		var i int
 		err := milieu.Pgx.QueryRow(ctx, "select 1").Scan(&i)
 		if err != nil {

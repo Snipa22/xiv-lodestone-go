@@ -2,6 +2,7 @@ package rssV1
 
 import (
 	"context"
+	"git.jagtech.io/Impala/corelib/middleware"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
@@ -11,7 +12,7 @@ import (
 
 func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		milieu := c.MustGet("MILIEU").(support.Milieu)
+		milieu := middleware.MustGetMilieu(c)
 		rows, err := milieu.Pgx.Query(context.Background(), "Select id, title, uri, square_edit, maint_body from ls_maint where region = $1 order by date_found desc limit 10", region)
 		if err != nil {
 			sentry.CaptureException(err)

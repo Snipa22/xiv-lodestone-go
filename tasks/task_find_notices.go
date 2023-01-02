@@ -2,6 +2,7 @@ package tasks
 
 import (
 	"context"
+	"git.jagtech.io/Impala/corelib"
 	"github.com/getsentry/sentry-go"
 	"github.com/jackc/pgx/v4"
 	"golang.org/x/net/html"
@@ -11,7 +12,7 @@ import (
 	"xiv-lodestone-go/support"
 )
 
-func SetupGetNoticePages(milieu support.Milieu) func() {
+func SetupGetNoticePages(milieu corelib.Milieu) func() {
 	return func() {
 		// Loop through all lodestones, download all the data required.
 		for _, v := range []support.Regions{0, 1, 2, 3, 4} {
