@@ -14,8 +14,10 @@ func Err403(c *gin.Context) {
 	})
 }
 
-func Err400(c *gin.Context) {
-	c.AbortWithStatus(400)
+func Err400(c *gin.Context, errorStr string) {
+	c.AbortWithStatusJSON(403, gin.H{
+		"error": errorStr,
+	})
 }
 
 func JsonSuccess(c *gin.Context) {

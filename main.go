@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"xiv-lodestone-go/routes/marketV1"
 	"xiv-lodestone-go/routes/rssV1"
 	"xiv-lodestone-go/support"
 	"xiv-lodestone-go/tasks"
@@ -44,6 +45,13 @@ func main() {
 	if err != nil {
 		sentry.CaptureException(err)
 	}
+
+	go func() {
+		for {
+			tasks.UniversalisSocket(milieu)
+		}
+	}()
+
 	go c.Run()
 
 	r := gin.Default()
@@ -83,6 +91,8 @@ func main() {
 			topics.GET("/DE", rssV1.GetTopicsForLang(support.DE))
 		}
 	}
+
+	r.GET("/market/:world/:itemID", marketV1.GetMarketData)
 	r.GET("/ping", func(c *gin.Context) {
 		milieu := middleware.MustGetMilieu(c)
 		var i int
