@@ -51,6 +51,11 @@ type universalisReceive struct {
 var bg = context.Background()
 
 func UniversalisSocket(milieu corelib.Milieu) {
+	defer func() {
+		if r := recover(); r != nil {
+			UniversalisSocket(milieu)
+		}
+	}()
 	c, _, err := websocket.Dial(bg, "wss://universalis.app/api/ws", nil)
 	c.SetReadLimit(32768 * 4)
 	if err != nil {
