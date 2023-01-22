@@ -101,6 +101,9 @@ func UniversalisSocket(milieu corelib.Milieu) {
 		} else {
 			curTime := time.Now()
 			if data.Event == "listings/add" {
+				if _, err = milieu.Pgx.Exec(bg, "delete from items where item_id = $1 and world_id = $2", data.Item, data.World); err != nil {
+					sentry.CaptureException(err)
+				}
 				for _, v := range data.Listings {
 					_, _ = milieu.Pgx.Exec(bg, "insert into items (id, world_id, item_id, price, total, hq, date_updated, quantity) values ($1, $2, $3, $4, $5, $6, $8, $7) ON CONFLICT (id) DO UPDATE SET price = $4, total = $5, date_updated = $8, quantity = $7", v.ListingID, data.World, data.Item, v.PricePerUnit, v.Total, v.HQ, v.Quantity, curTime)
 				}

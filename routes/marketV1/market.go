@@ -12,7 +12,15 @@ import (
 
 var bg = context.Background()
 
-type kupoMarket struct {
+type kupoMarketShell struct {
+	ItemID         int                  `json:"itemID"`
+	WorldID        int                  `json:"worldID"`
+	LastUploadTime int64                `json:"lastUploadTime"`
+	Listings       []kupoMarketListings `json:"listings"`
+	WorldName      string               `json:"worldName"`
+}
+
+type kupoMarketListings struct {
 	PricePerUnit int    `json:"pricePerUnit"`
 	Total        int    `json:"total"`
 	Quantity     int    `json:"quantity"`
@@ -30,6 +38,7 @@ func GetMarketData(c *gin.Context) {
 		support.Err400(c, "Unable to parse ItemID")
 		return
 	}
+	var lastUploadTime int64
 	query := `select items.world_id, items.price, items.total, items.hq, items.quantity, items.date_updated from items where item_id = $2 and world_id in (select sqw.internal_id from sq_worlds as sqw
 		join sq_logical_datacenters sld on sld.id = sqw.sq_logical_datacenter_id
 		join sq_physical_datacenters spd on spd.id = sld.physical_dc_id
@@ -45,9 +54,9 @@ func GetMarketData(c *gin.Context) {
 		support.Err400(c, "No rows found")
 		return
 	}
-	results := make([]kupoMarket, 0)
+	results := make([]kupoMarketListings, 0)
 	for rows.Next() {
-		res := kupoMarket{}
+		res := kupoMarketListings{}
 		tData := time.Now()
 		worldID := 0
 		if err = rows.Scan(&worldID, &res.PricePerUnit, &res.Total, &res.HQ, &res.Quantity, &tData); err != nil {
@@ -61,8 +70,17 @@ func GetMarketData(c *gin.Context) {
 			return
 		}
 		res.Timestamp = tData.Unix()
+		if res.Timestamp > lastUploadTime {
+			lastUploadTime = res.Timestamp
+		}
 		results = append(results, res)
 	}
-	c.JSON(200, results)
+	c.JSON(200, kupoMarketShell{
+		ItemID:         itemID,
+		WorldID:        0,
+		LastUploadTime: lastUploadTime,
+		Listings:       results,
+		WorldName:      "",
+	})
 	return
 }
