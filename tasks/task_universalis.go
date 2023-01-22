@@ -40,11 +40,23 @@ type universalisListing struct {
 	WorldName      *string
 }
 
+type universalisSale struct {
+	BuyerName    *string
+	HQ           bool
+	OnMannequin  bool
+	Timestamp    int
+	PricePerUnit int
+	Quantity     int
+	Total        int
+	WorldID      *int
+	WorldName    *string
+}
+
 type universalisReceive struct {
 	Event    string
 	Item     int
 	Listings []universalisListing
-	Sales    []string
+	Sales    []universalisSale
 	World    int
 }
 
@@ -76,19 +88,16 @@ func UniversalisSocket(milieu corelib.Milieu) {
 		sentry.CaptureException(err)
 		return
 	}
-	/*
-		Disabling Sales as it's likely not needed for what I'm doing
-		msg, _ = bson.Marshal(universalisSub{"subscribe", "sales/add"})
-		if err = c.Write(bg, websocket.MessageBinary, msg); err != nil {
-			sentry.CaptureException(err)
-			return
-		}
-		msg, _ = bson.Marshal(universalisSub{"subscribe", "sales/remove"})
-		if err = c.Write(bg, websocket.MessageBinary, msg); err != nil {
-			sentry.CaptureException(err)
-			return
-		}
-	*/
+	msg, _ = bson.Marshal(universalisSub{"subscribe", "sales/add"})
+	if err = c.Write(bg, websocket.MessageBinary, msg); err != nil {
+		sentry.CaptureException(err)
+		return
+	}
+	msg, _ = bson.Marshal(universalisSub{"subscribe", "sales/remove"})
+	if err = c.Write(bg, websocket.MessageBinary, msg); err != nil {
+		sentry.CaptureException(err)
+		return
+	}
 	for {
 		_, n, err := c.Read(bg)
 		if err != nil {
@@ -112,6 +121,10 @@ func UniversalisSocket(milieu corelib.Milieu) {
 					if _, err = milieu.Pgx.Exec(bg, "delete from items where id = $1", v.ListingID); err != nil {
 						sentry.CaptureException(err)
 					}
+				}
+			} else if data.Event == "sales/add" {
+				for _, v := range data.Sales {
+					_, _ = milieu.Pgx.Exec(bg, "insert into sales (world_id, item_id, price, total, hq, quantity, date_loaded) values ($1, $2, $3, $4, $5, $6, $7)", data.World, data.Item, v.PricePerUnit, v.Total, v.HQ, v.Quantity, time.Unix(int64(v.Timestamp), 0))
 				}
 			}
 		}

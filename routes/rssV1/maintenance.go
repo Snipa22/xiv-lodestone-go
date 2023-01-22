@@ -24,6 +24,7 @@ func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 			Author:      &feeds.Author{Name: "Impala#0059"},
 			Created:     time.Now(),
 		}
+		defer rows.Close()
 		var feedItems []*feeds.Item
 		for rows.Next() {
 			var id, title, uri, maint_body string
