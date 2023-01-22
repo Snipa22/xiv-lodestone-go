@@ -126,7 +126,7 @@ func GetMarketData(c *gin.Context) {
 		}
 		res.Timestamp = tData.Unix()
 		if res.Timestamp > lastUploadTime {
-			lastUploadTime = res.Timestamp
+			returnData.LastUploadTime = res.Timestamp
 		}
 		returnData.Listings = append(returnData.Listings, res)
 		if res.PricePerUnit < returnData.MinPrice || returnData.MinPrice == 0 {
