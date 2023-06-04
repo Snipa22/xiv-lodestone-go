@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Snipa22/core-go-lib/milieu/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v4"
 	"github.com/montanaflynn/stats"
 	"strconv"
 	"time"
@@ -44,7 +45,6 @@ func getMean(in []int) int {
 	data := stats.LoadRawData(in)
 	outliers, err := data.QuartileOutliers()
 	if err != nil {
-		sentry.CaptureException(err)
 		return 0
 	}
 	var newParse []float64
@@ -69,7 +69,7 @@ func GetMarketData(c *gin.Context) {
 	world := c.Param("world")
 	itemID, err := strconv.Atoi(c.Param("itemID"))
 	if err != nil {
-		sentry.CaptureException(err)
+		milieu.CaptureException(err)
 		support.Err400(c, "Unable to parse ItemID")
 		return
 	}
@@ -85,7 +85,7 @@ func GetMarketData(c *gin.Context) {
 		or lower(sqw.internal_name) = lower($1)) order by items.date_updated desc`
 	rows, err := milieu.GetRawPGXPool().Query(bg, query, world, itemID)
 	if err != nil {
-		sentry.CaptureException(err)
+		milieu.CaptureException(err)
 		support.Err400(c, "No rows found")
 		return
 	}
@@ -113,12 +113,12 @@ func GetMarketData(c *gin.Context) {
 		tData := time.Now()
 		worldID := 0
 		if err = rows.Scan(&worldID, &res.PricePerUnit, &res.Total, &res.HQ, &res.Quantity, &tData); err != nil {
-			sentry.CaptureException(err)
+			milieu.CaptureException(err)
 			support.Err500(c)
 			return
 		}
 		if res.WorldName, err = support.GetWorldName(milieu, worldID); err != nil {
-			sentry.CaptureException(err)
+			milieu.CaptureException(err)
 			support.Err500(c)
 			return
 		}
@@ -155,7 +155,7 @@ func GetMarketData(c *gin.Context) {
 		or lower(sqw.internal_name) = lower($1))`
 	rows, err = milieu.GetRawPGXPool().Query(bg, query, world, itemID)
 	if err != nil && err != pgx.ErrNoRows {
-		sentry.CaptureException(err)
+		milieu.CaptureException(err)
 		support.Err400(c, "No rows found")
 		return
 	} else if err != nil && err == pgx.ErrNoRows {
@@ -170,7 +170,7 @@ func GetMarketData(c *gin.Context) {
 		hq := false
 		price := 0
 		if err = rows.Scan(&price, &hq); err != nil {
-			sentry.CaptureException(err)
+			milieu.CaptureException(err)
 			support.Err500(c)
 			return
 		}

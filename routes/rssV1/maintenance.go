@@ -14,7 +14,7 @@ func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 		milieu := middleware.MustGetMilieu(c)
 		rows, err := milieu.GetRawPGXPool().Query(context.Background(), "Select id, title, uri, square_edit, maint_body from ls_maint where region = $1 order by date_found desc limit 10", region)
 		if err != nil {
-			sentry.CaptureException(err)
+			milieu.CaptureException(err)
 		}
 		feed := &feeds.Feed{
 			Title:       "FFXIV Lodestone Maintenance RSS feed for " + region.String(),
@@ -29,7 +29,7 @@ func GetMaintForLang(region support.Regions) func(c *gin.Context) {
 			var id, title, uri, maint_body string
 			var edit time.Time
 			if err = rows.Scan(&id, &title, &uri, &edit, &maint_body); err != nil {
-				sentry.CaptureException(err)
+				milieu.CaptureException(err)
 			}
 			feedItems = append(feedItems,
 				&feeds.Item{

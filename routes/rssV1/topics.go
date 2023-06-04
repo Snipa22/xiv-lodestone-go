@@ -14,7 +14,7 @@ func GetTopicsForLang(region support.Regions) func(c *gin.Context) {
 		milieu := middleware.MustGetMilieu(c)
 		rows, err := milieu.GetRawPGXPool().Query(context.Background(), "Select id, title, uri, square_edit, topic_body, topic_image from ls_topics where region = $1 order by date_found desc limit 10", region)
 		if err != nil {
-			sentry.CaptureException(err)
+			milieu.CaptureException(err)
 		}
 		feed := &feeds.Feed{
 			Title:       "FFXIV Lodestone topics RSS feed for " + region.String(),
@@ -29,7 +29,7 @@ func GetTopicsForLang(region support.Regions) func(c *gin.Context) {
 			var id, title, uri, maintBody, topicImage string
 			var edit time.Time
 			if err = rows.Scan(&id, &title, &uri, &edit, &maintBody, &topicImage); err != nil {
-				sentry.CaptureException(err)
+				milieu.CaptureException(err)
 			}
 			feedItems = append(feedItems,
 				&feeds.Item{

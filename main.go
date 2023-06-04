@@ -5,6 +5,7 @@ import (
 	"github.com/Snipa22/core-go-lib/milieu"
 	"github.com/Snipa22/core-go-lib/milieu/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/robfig/cron/v3"
 	"log"
 	"net/http"
 	"os"
@@ -22,7 +23,7 @@ func main() {
 	sentryURI := os.Getenv("SENTRY_SERVER")
 	m, err := milieu.NewMilieu(&psqlURL, &redisURI, &sentryURI)
 	if err != nil {
-		sentry.CaptureException(err)
+		m.CaptureException(err)
 		log.Fatalf("Unable to setup Milieu, check sentry for details")
 	}
 
@@ -30,11 +31,11 @@ func main() {
 	// Enable Recurring Tasks
 	c := cron.New(cron.WithSeconds())
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGettersForTopics(m))
-	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintencePages(m))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintenancePages(m))
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetNoticePages(m))
 	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetStatusPages(m))
 	if err != nil {
-		sentry.CaptureException(err)
+		m.CaptureException(err)
 	}
 
 	go func() {
@@ -85,11 +86,11 @@ func main() {
 
 	r.GET("/market/:world/:itemID", marketV1.GetMarketData)
 	r.GET("/ping", func(c *gin.Context) {
-		milieu := middleware.MustGetMilieu(c)
+		m := middleware.MustGetMilieu(c)
 		var i int
-		err := milieu.GetRawPGXPool().QueryRow(ctx, "select 1").Scan(&i)
+		err := m.GetRawPGXPool().QueryRow(ctx, "select 1").Scan(&i)
 		if err != nil {
-			sentry.CaptureException(err)
+			m.CaptureException(err)
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
@@ -99,7 +100,7 @@ func main() {
 
 	err = r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 	if err != nil {
-		sentry.CaptureException(err)
+		m.CaptureException(err)
 		log.Fatalf("Unable to initalize gin")
 	}
 }

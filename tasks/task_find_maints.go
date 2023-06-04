@@ -3,6 +3,7 @@ package tasks
 import (
 	"context"
 	"github.com/Snipa22/core-go-lib/milieu"
+	"github.com/jackc/pgx/v4"
 	"golang.org/x/net/html"
 	"regexp"
 	"strconv"
@@ -14,7 +15,7 @@ import (
 var extractStrftime, _ = regexp.Compile(`\(\d+`)
 var extractHash, _ = regexp.Compile(`\w{40}`)
 
-func SetupGetMaintencePages(m milieu.Milieu) func() {
+func SetupGetMaintenancePages(m *milieu.Milieu) func() {
 	return func() {
 		// Loop through all lodestones, download all the data required.
 		for _, v := range []support.Regions{0, 1, 2, 3, 4} {
@@ -23,7 +24,7 @@ func SetupGetMaintencePages(m milieu.Milieu) func() {
 			baseURI += "/lodestone/news/category/2"
 			page, err := support.GetHtmlPage(baseURI)
 			if err != nil {
-				sentry.CaptureException(err)
+				m.CaptureException(err)
 				continue
 			}
 			tkn := html.NewTokenizer(strings.NewReader(page))
@@ -54,15 +55,15 @@ func SetupGetMaintencePages(m milieu.Milieu) func() {
 						// Do the time conversion
 						val, err := strconv.Atoi(ts)
 						if err != nil {
-							sentry.CaptureException(err)
+							m.CaptureException(err)
 						}
-						row := milieu.GetRawPGXPool().QueryRow(context.Background(), "select id from ls_maint where id = $1 and region = $2", hash, v)
+						row := m.GetRawPGXPool().QueryRow(context.Background(), "select id from ls_maint where id = $1 and region = $2", hash, v)
 						var bid string
 						if err := row.Scan(&bid); err != nil && err == pgx.ErrNoRows {
 							// Get the full data set
 							internalPage, err := support.GetHtmlPage(maintURL)
 							if err != nil {
-								sentry.CaptureException(err)
+								m.CaptureException(err)
 								continue
 							}
 							intTkn := html.NewTokenizer(strings.NewReader(internalPage))
@@ -88,10 +89,10 @@ func SetupGetMaintencePages(m milieu.Milieu) func() {
 								}
 							}
 							// Do the SQL insert if appropriate
-							_, err = milieu.GetRawPGXPool().Exec(context.Background(), "insert into ls_maint (id, region, title, uri, square_edit, maint_body)"+
+							_, err = m.GetRawPGXPool().Exec(context.Background(), "insert into ls_maint (id, region, title, uri, square_edit, maint_body)"+
 								"values ($1, $2, $3, $4, $5, $6) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0), maintBody)
 							if err != nil {
-								sentry.CaptureException(err)
+								m.CaptureException(err)
 							}
 						}
 

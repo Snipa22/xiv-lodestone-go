@@ -3,11 +3,13 @@ module xiv-lodestone-go
 go 1.19
 
 require (
-	github.com/Snipa22/core-go-lib v0.0.2
+	github.com/Snipa22/core-go-lib v0.1.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/gorilla/feeds v1.1.1
 	github.com/hashicorp/golang-lru/v2 v2.0.2
+	github.com/jackc/pgx/v4 v4.18.1
 	github.com/montanaflynn/stats v0.7.1
+	github.com/robfig/cron/v3 v3.0.1
 	go.mongodb.org/mongo-driver v1.11.6
 	golang.org/x/net v0.10.0
 	nhooyr.io/websocket v1.8.7
@@ -34,7 +36,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.2 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgtype v1.14.0 // indirect
-	github.com/jackc/pgx/v4 v4.18.1 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
