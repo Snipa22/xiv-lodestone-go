@@ -2,10 +2,8 @@ package marketV1
 
 import (
 	"context"
-	"git.jagtech.io/Impala/corelib/middleware"
-	"github.com/getsentry/sentry-go"
+	"github.com/Snipa22/core-go-lib/milieu/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v4"
 	"github.com/montanaflynn/stats"
 	"strconv"
 	"time"
@@ -85,7 +83,7 @@ func GetMarketData(c *gin.Context) {
 		or lower(sld.internal_name) = lower($1)
 		or lower(sqw.display_name) = lower($1)
 		or lower(sqw.internal_name) = lower($1)) order by items.date_updated desc`
-	rows, err := milieu.Pgx.Query(bg, query, world, itemID)
+	rows, err := milieu.GetRawPGXPool().Query(bg, query, world, itemID)
 	if err != nil {
 		sentry.CaptureException(err)
 		support.Err400(c, "No rows found")
@@ -155,7 +153,7 @@ func GetMarketData(c *gin.Context) {
 		or lower(sld.internal_name) = lower($1)
 		or lower(sqw.display_name) = lower($1)
 		or lower(sqw.internal_name) = lower($1))`
-	rows, err = milieu.Pgx.Query(bg, query, world, itemID)
+	rows, err = milieu.GetRawPGXPool().Query(bg, query, world, itemID)
 	if err != nil && err != pgx.ErrNoRows {
 		sentry.CaptureException(err)
 		support.Err400(c, "No rows found")

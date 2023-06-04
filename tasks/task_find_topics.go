@@ -2,9 +2,7 @@ package tasks
 
 import (
 	"context"
-	"git.jagtech.io/Impala/corelib"
-	"github.com/getsentry/sentry-go"
-	"github.com/jackc/pgx/v4"
+	"github.com/Snipa22/core-go-lib/milieu"
 	"golang.org/x/net/html"
 	"strconv"
 	"strings"
@@ -12,7 +10,7 @@ import (
 	"xiv-lodestone-go/support"
 )
 
-func SetupGettersForTopics(milieu corelib.Milieu) func() {
+func SetupGettersForTopics(m milieu.Milieu) func() {
 	return func() {
 		// Loop through all lodestones, download all the data required.
 		for _, v := range []support.Regions{0, 1, 2, 3, 4} {
@@ -75,11 +73,11 @@ func SetupGettersForTopics(milieu corelib.Milieu) func() {
 					t := tkn.Token()
 					if t.Data == "div" && inTextParseZone {
 						inTextParseZone = false
-						row := milieu.Pgx.QueryRow(context.Background(), "select id from ls_topics where id = $1 and region = $2", hash, v)
+						row := milieu.GetRawPGXPool().QueryRow(context.Background(), "select id from ls_topics where id = $1 and region = $2", hash, v)
 						var bid string
 						if err := row.Scan(&bid); err != nil && err == pgx.ErrNoRows {
 							// Do the SQL insert if appropriate
-							_, err = milieu.Pgx.Exec(context.Background(), "insert into ls_topics (id, region, title, uri, square_edit, topic_body, topic_image)"+
+							_, err = milieu.GetRawPGXPool().Exec(context.Background(), "insert into ls_topics (id, region, title, uri, square_edit, topic_body, topic_image)"+
 								"values ($1, $2, $3, $4, $5, $6, $7) on conflict do nothing", hash, v, maintLine, maintURL, time.Unix(int64(val), 0), topicBody, imageURL)
 							if err != nil {
 								sentry.CaptureException(err)

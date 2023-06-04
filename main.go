@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"git.jagtech.io/Impala/corelib"
-	"git.jagtech.io/Impala/corelib/middleware"
-	"github.com/getsentry/sentry-go"
+	"github.com/Snipa22/core-go-lib/milieu"
+	"github.com/Snipa22/core-go-lib/milieu/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/robfig/cron/v3"
 	"log"
 	"net/http"
 	"os"
@@ -19,17 +17,10 @@ import (
 var ctx = context.Background()
 
 func main() {
-	err := sentry.Init(sentry.ClientOptions{
-		Dsn: os.Getenv("SENTRY_SERVER"),
-		// Specify a fixed sample rate:
-		// We recommend adjusting this value in production
-		TracesSampleRate: 1.0,
-	})
-	if err != nil {
-		log.Fatalf("sentry.Init: %s", err)
-	}
-
-	milieu, err := corelib.NewMilieu(os.Getenv("PSQL_SERVER"), os.Getenv("REDIS_SERVER"))
+	psqlURL := os.Getenv("PSQL_SERVER")
+	redisURI := os.Getenv("REDIS_SERVER")
+	sentryURI := os.Getenv("SENTRY_SERVER")
+	m, err := milieu.NewMilieu(&psqlURL, &redisURI, &sentryURI)
 	if err != nil {
 		sentry.CaptureException(err)
 		log.Fatalf("Unable to setup Milieu, check sentry for details")
@@ -38,24 +29,24 @@ func main() {
 	// We need to broadcast through a channel to each worker that
 	// Enable Recurring Tasks
 	c := cron.New(cron.WithSeconds())
-	_, err = c.AddFunc("0 * * * * *", tasks.SetupGettersForTopics(milieu))
-	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintencePages(milieu))
-	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetNoticePages(milieu))
-	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetStatusPages(milieu))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGettersForTopics(m))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetMaintencePages(m))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetNoticePages(m))
+	_, err = c.AddFunc("0 * * * * *", tasks.SetupGetStatusPages(m))
 	if err != nil {
 		sentry.CaptureException(err)
 	}
 
 	go func() {
 		for {
-			tasks.UniversalisSocket(milieu)
+			tasks.UniversalisSocket(m)
 		}
 	}()
 
 	go c.Run()
 
 	r := gin.Default()
-	r.Use(middleware.SetupMilieu(milieu))
+	r.Use(middleware.SetupMilieu(m))
 	rss := r.Group("/rss")
 	{
 		maint := rss.Group("/maint")
@@ -96,7 +87,7 @@ func main() {
 	r.GET("/ping", func(c *gin.Context) {
 		milieu := middleware.MustGetMilieu(c)
 		var i int
-		err := milieu.Pgx.QueryRow(ctx, "select 1").Scan(&i)
+		err := milieu.GetRawPGXPool().QueryRow(ctx, "select 1").Scan(&i)
 		if err != nil {
 			sentry.CaptureException(err)
 		}
