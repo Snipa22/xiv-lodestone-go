@@ -1,0 +1,513 @@
+databaseChangeLog:
+- changeSet:
+    id: 1716853914926-1
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: items_pkey
+            name: id
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: world_id
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: item_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: price
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: total
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: hq
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: quantity
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: date_updated
+            type: TIMESTAMP WITH TIME ZONE
+        tableName: items
+- changeSet:
+    id: 1716853914926-2
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: TEXT
+        - column:
+            name: region
+            type: SMALLINT
+        - column:
+            name: title
+            type: TEXT
+        - column:
+            name: uri
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: square_edit
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: date_found
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            name: maint_body
+            type: TEXT
+        tableName: ls_maint
+- changeSet:
+    id: 1716853914926-3
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: TEXT
+        - column:
+            name: region
+            type: SMALLINT
+        - column:
+            name: title
+            type: TEXT
+        - column:
+            name: uri
+            type: TEXT
+        - column:
+            name: notice_body
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: square_edit
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: date_found
+            type: TIMESTAMP WITH TIME ZONE
+        tableName: ls_notices
+- changeSet:
+    id: 1716853914926-4
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: TEXT
+        - column:
+            name: region
+            type: SMALLINT
+        - column:
+            name: title
+            type: TEXT
+        - column:
+            name: uri
+            type: TEXT
+        - column:
+            name: status_body
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: square_edit
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: date_found
+            type: TIMESTAMP WITH TIME ZONE
+        tableName: ls_status
+- changeSet:
+    id: 1716853914926-5
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: TEXT
+        - column:
+            name: region
+            type: SMALLINT
+        - column:
+            name: title
+            type: TEXT
+        - column:
+            name: uri
+            type: TEXT
+        - column:
+            name: topic_body
+            type: TEXT
+        - column:
+            name: square_edit
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            defaultValueComputed: now()
+            name: date_found
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            name: topic_image
+            type: TEXT
+        tableName: ls_topics
+- changeSet:
+    id: 1716853914926-6
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: sales_pkey
+            name: id
+            startWith: 651323999
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: hq
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            defaultValueComputed: now()
+            name: date_loaded
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: price
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: quantity
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: total
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: world_id
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: item_id
+            type: INTEGER
+        tableName: sales
+- changeSet:
+    id: 1716853914926-7
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: sq_logical_datacenters_pkey
+            name: id
+            startWith: 12
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: public_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: internal_name
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: physical_dc_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: display_name
+            type: TEXT
+        tableName: sq_logical_datacenters
+- changeSet:
+    id: 1716853914926-8
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: sq_worlds_pkey
+            name: id
+            startWith: 82
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: internal_name
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: internal_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: sq_logical_datacenter_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: display_name
+            type: TEXT
+        tableName: sq_worlds
+- changeSet:
+    id: 1716853914926-9
+    author: Impala (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: sq_physical_datacenters_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: internal_name
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: display_name
+            type: TEXT
+        tableName: sq_physical_datacenters
+- changeSet:
+    id: 1716853914926-10
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: id
+        - column:
+            name: world_id
+        indexName: idx_items_id_world
+        tableName: items
+- changeSet:
+    id: 1716853914926-11
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: item_id
+        - column:
+            name: world_id
+        indexName: idx_items_item_id_world
+        tableName: items
+- changeSet:
+    id: 1716853914926-12
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: item_id
+        - column:
+            name: world_id
+        - column:
+            defaultValueComputed: now()
+            name: date_loaded
+        indexName: idx_sales_item_id_world_time
+        tableName: sales
+- changeSet:
+    id: 1716853914926-13
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: physical_dc_id
+        indexName: idx_logical_dc_phys_id
+        tableName: sq_logical_datacenters
+- changeSet:
+    id: 1716853914926-14
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: public_id
+        - column:
+            name: physical_dc_id
+        indexName: idx_logical_dc_public_phys
+        tableName: sq_logical_datacenters
+        unique: true
+- changeSet:
+    id: 1716853914926-15
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            computed: true
+            name: lower(display_name)
+        indexName: idx_sld_dn_lower
+        tableName: sq_logical_datacenters
+- changeSet:
+    id: 1716853914926-16
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            computed: true
+            name: lower(internal_name)
+        indexName: idx_sld_in_lower
+        tableName: sq_logical_datacenters
+- changeSet:
+    id: 1716853914926-17
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            computed: true
+            name: lower(display_name)
+        indexName: idx_sw_dn_lower
+        tableName: sq_worlds
+- changeSet:
+    id: 1716853914926-18
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            computed: true
+            name: lower(internal_name)
+        indexName: idx_sw_in_lower
+        tableName: sq_worlds
+- changeSet:
+    id: 1716853914926-19
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: internal_id
+        indexName: idx_worlds_internal_id
+        tableName: sq_worlds
+        unique: true
+- changeSet:
+    id: 1716853914926-20
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: sq_logical_datacenter_id
+        indexName: idx_worlds_logical_datacenter_id
+        tableName: sq_worlds
+- changeSet:
+    id: 1716853914926-21
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            computed: true
+            name: lower(display_name)
+        indexName: idx_spd_dn_lower
+        tableName: sq_physical_datacenters
+- changeSet:
+    id: 1716853914926-22
+    author: Impala (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            computed: true
+            name: lower(internal_name)
+        indexName: idx_spd_in_lower
+        tableName: sq_physical_datacenters
+- changeSet:
+    id: 1716853914926-23
+    author: Impala (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: physical_dc_id
+        baseTableName: sq_logical_datacenters
+        constraintName: fk_physical_datacenter
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: sq_physical_datacenters
+        validate: true
+- changeSet:
+    id: 1716853914926-24
+    author: Impala (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: sq_logical_datacenter_id
+        baseTableName: sq_worlds
+        constraintName: fk_sq_logical_datacenter
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: sq_logical_datacenters
+        validate: true
+
